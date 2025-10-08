@@ -1,0 +1,32 @@
+@GameListing.Api_HostAddress = https://localhost:7179
+
+GET {{GameListing.Api_HostAddress}}/api/games
+
+###
+
+POST {{GameListing.Api_HostAddress}}/api/games
+Content-Type: application/json
+
+{
+  //Game
+}
+
+###
+
+@id=0
+DELETE {{GameListing.Api_HostAddress}}/api/games/{{id}}
+
+###
+
+GET {{GameListing.Api_HostAddress}}/api/games/{{id}}
+
+###
+
+PUT {{GameListing.Api_HostAddress}}/api/games/{{id}}
+Content-Type: application/json
+
+{
+  //Game
+}
+
+###
