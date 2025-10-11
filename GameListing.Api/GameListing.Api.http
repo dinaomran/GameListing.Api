@@ -8,12 +8,16 @@ POST {{GameListing.Api_HostAddress}}/api/games
 Content-Type: application/json
 
 {
-  //Game
+  "id": 4,
+  "title": "Call of Duty: Black Ops 6",
+  "type": "FPS",
+  "releaseDate": "2024-10-25",
+  "price": 69.99
 }
 
 ###
 
-@id=0
+@id=1
 DELETE {{GameListing.Api_HostAddress}}/api/games/{{id}}
 
 ###

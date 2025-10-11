@@ -11,9 +11,9 @@ namespace GameListing.Api.Controllers
     {
         private static List<Game> games = new List<Game>
         {
-            new() { Id = 1, Title = "Call of Duty: Black Ops 6", Type = "FPS", ReleaseDate = new DateOnly(2024, 10, 25), Price = 69.99 },
-            new() { Id = 2, Title = "God of War", Type = "Action-adventure", ReleaseDate = new DateOnly(2022, 11, 9), Price = 39.99},
-            new() { Id = 3, Title = "Grand Theft Auto V", Type = "Action-adventure", ReleaseDate = new DateOnly(2013, 9, 17), Price = 29.99}
+            new() { Id = 1, Title = "Call of Duty: Black Ops 6", Category = "FPS", ReleaseDate = new DateOnly(2024, 10, 25), Price = 69.99 },
+            new() { Id = 2, Title = "God of War", Category = "Action-adventure", ReleaseDate = new DateOnly(2022, 11, 9), Price = 39.99},
+            new() { Id = 3, Title = "Grand Theft Auto V", Category = "Action-adventure", ReleaseDate = new DateOnly(2013, 9, 17), Price = 29.99}
         };
 
         // GET: api/<GamesController>
@@ -35,7 +35,7 @@ namespace GameListing.Api.Controllers
         [HttpPost]
         public ActionResult<Game> Post([FromBody] Game newGame)
         {
-            if(games.Any(g => g.Id == newGame.Id))
+            if (games.Any(g => g.Id == newGame.Id))
             {
                 return BadRequest($"A game with Id {newGame.Id} already exists.");
             }
@@ -55,7 +55,7 @@ namespace GameListing.Api.Controllers
             }
 
             game.Title = updatedGame.Title;
-            game.Type = updatedGame.Type;
+            game.Category = updatedGame.Category;
             game.ReleaseDate = updatedGame.ReleaseDate;
             game.Price = updatedGame.Price;
 
