@@ -1,73 +1,97 @@
 ﻿using GameListing.Api.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+namespace GameListing.Api.Controllers;
 
-namespace GameListing.Api.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class GamesController(GameListingDbContext context) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class GamesController : ControllerBase
+
+    // GET: api/Games
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Game>>> GetGames()
     {
-        private static List<Game> games = new List<Game>
-        {
-            new() { Id = 1, Title = "Call of Duty: Black Ops 6", Category = "FPS", ReleaseDate = new DateOnly(2024, 10, 25), Price = 69.99 },
-            new() { Id = 2, Title = "God of War", Category = "Action-adventure", ReleaseDate = new DateOnly(2022, 11, 9), Price = 39.99},
-            new() { Id = 3, Title = "Grand Theft Auto V", Category = "Action-adventure", ReleaseDate = new DateOnly(2013, 9, 17), Price = 29.99}
-        };
+        return await context.Games.ToListAsync();
+    }
 
-        // GET: api/<GamesController>
-        [HttpGet]
-        public ActionResult<IEnumerable<Game>> Get()
+    // GET: api/Games/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Game>> GetGame(int id)
+    {
+        var game = await context.Games
+            .Include(g => g.Players)
+            .FirstOrDefaultAsync(q => q.Id == id);
+
+        if (game == null)
         {
-            return Ok(games);
+            return NotFound();
         }
 
-        // GET api/<GamesController>/5
-        [HttpGet("{id}")]
-        public ActionResult<Game> Get(int id)
+        return game;
+    }
+
+    // PUT: api/Games/5
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutGame(int id, Game game)
+    {
+        if (id != game.Id)
         {
-            var game = games.FirstOrDefault(g => g.Id == id);
-            return game == null ? NotFound() : Ok(game);
+            return BadRequest();
         }
 
-        // POST api/<GamesController>
-        [HttpPost]
-        public ActionResult<Game> Post([FromBody] Game newGame)
-        {
-            if (games.Any(g => g.Id == newGame.Id))
-            {
-                return BadRequest($"A game with Id {newGame.Id} already exists.");
-            }
+        context.Entry(game).State = EntityState.Modified;
 
-            games.Add(newGame);
-            return CreatedAtAction(nameof(Get), new { id = newGame.Id }, newGame);
+        try
+        {
+            await context.SaveChangesAsync();
         }
-
-        // PUT api/<GamesController>/5
-        [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Game updatedGame)
+        catch (DbUpdateConcurrencyException)
         {
-            var game = games.FirstOrDefault(g => g.Id == id);
-            if (game == null)
+            if (!await GameExistsAsync(id))
             {
                 return NotFound();
             }
-
-            game.Title = updatedGame.Title;
-            game.Category = updatedGame.Category;
-            game.ReleaseDate = updatedGame.ReleaseDate;
-            game.Price = updatedGame.Price;
-
-            return NoContent();
+            else
+            {
+                throw;
+            }
         }
 
-        // DELETE api/<GamesController>/5
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        return NoContent();
+    }
+
+    // POST: api/Games
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPost]
+    public async Task<ActionResult<Game>> PostGame(Game game)
+    {
+        context.Games.Add(game);
+        await context.SaveChangesAsync();
+
+        return CreatedAtAction("GetGame", new { id = game.Id }, game);
+    }
+
+    // DELETE: api/Games/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteGame(int id)
+    {
+        var game = await context.Games.FindAsync(id);
+        if (game == null)
         {
-            var game = games.FirstOrDefault(g => g.Id == id);
-            return game == null ? NotFound(new { message = "Game not found" }) : NoContent();
+            return NotFound();
         }
+
+        context.Games.Remove(game);
+        await context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    private async Task<bool> GameExistsAsync(int id)
+    {
+        return await context.Games.AnyAsync(e => e.Id == id);
     }
 }

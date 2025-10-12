@@ -8,16 +8,15 @@ POST {{GameListing.Api_HostAddress}}/api/games
 Content-Type: application/json
 
 {
-  "id": 4,
-  "title": "Call of Duty: Black Ops 6",
-  "type": "FPS",
-  "releaseDate": "2024-10-25",
-  "price": 69.99
+    "title": "Test Game",
+    "type": "FPS",
+    "releaseDate": "2024-10-25",
+    "price": 69.99
 }
 
 ###
 
-@id=1
+@id=4
 DELETE {{GameListing.Api_HostAddress}}/api/games/{{id}}
 
 ###
@@ -30,7 +29,77 @@ PUT {{GameListing.Api_HostAddress}}/api/games/{{id}}
 Content-Type: application/json
 
 {
-  //Game
+    "id": 3,
+    "title": "Test Game put",
+    "type": "FPS",
+    "releaseDate": "2024-10-25",
+    "price": 69.99
+}
+
+###
+
+GET {{GameListing.Api_HostAddress}}/api/countries
+
+###
+
+POST {{GameListing.Api_HostAddress}}/api/countries
+Content-Type: application/json
+
+{
+    "Name": "Test Country"
+}
+
+###
+
+DELETE {{GameListing.Api_HostAddress}}/api/countries/{{id}}
+
+###
+
+GET {{GameListing.Api_HostAddress}}/api/countries/{{id}}
+
+###
+
+PUT {{GameListing.Api_HostAddress}}/api/countries/{{id}}
+Content-Type: application/json
+
+{
+    "Id": 3,
+    "Name": "Test Country Put"
+}
+
+###
+
+GET {{GameListing.Api_HostAddress}}/api/players
+
+###
+
+POST {{GameListing.Api_HostAddress}}/api/players
+Content-Type: application/json
+
+{
+    "Username": "Test Player",
+    "Email": "test@test.com",
+    "CountryId": 1
+}
+
+###
+
+DELETE {{GameListing.Api_HostAddress}}/api/players/{{id}}
+
+###
+
+GET {{GameListing.Api_HostAddress}}/api/players/{{id}}
+
+###
+
+PUT {{GameListing.Api_HostAddress}}/api/players/{{id}}
+Content-Type: application/json
+
+{
+    "Id": 3,
+    "Username": "Test Player Put",
+    "Email": "test@test.com",
+    "CountryId": 2
 }
 
 ###
