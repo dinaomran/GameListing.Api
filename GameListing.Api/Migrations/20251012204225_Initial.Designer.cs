@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameListing.Api.Migrations
 {
     [DbContext(typeof(GameListingDbContext))]
-    [Migration("20251011215753_Initial")]
+    [Migration("20251012204225_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -77,7 +77,7 @@ namespace GameListing.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CountryId")
+                    b.Property<int?>("CountryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -114,9 +114,7 @@ namespace GameListing.Api.Migrations
                 {
                     b.HasOne("GameListing.Api.Data.Country", "Country")
                         .WithMany("Players")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CountryId");
 
                     b.Navigation("Country");
                 });

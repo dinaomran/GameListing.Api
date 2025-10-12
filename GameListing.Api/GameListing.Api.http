@@ -8,15 +8,16 @@ POST {{GameListing.Api_HostAddress}}/api/games
 Content-Type: application/json
 
 {
-    "title": "Test Game",
-    "type": "FPS",
-    "releaseDate": "2024-10-25",
-    "price": 69.99
+    "Title": "Test Game",
+    "Category": "FPS",
+    "ReleaseDate": "2024-10-25",
+    "Price": 69.99,
+    "PlayerIds": [1, 2]
 }
 
 ###
 
-@id=4
+@id=3
 DELETE {{GameListing.Api_HostAddress}}/api/games/{{id}}
 
 ###
@@ -29,11 +30,11 @@ PUT {{GameListing.Api_HostAddress}}/api/games/{{id}}
 Content-Type: application/json
 
 {
-    "id": 3,
-    "title": "Test Game put",
-    "type": "FPS",
-    "releaseDate": "2024-10-25",
-    "price": 69.99
+    "Id": 3,
+    "Title": "Test Game put",
+    "Category": "FPS",
+    "ReleaseDate": "2024-10-25",
+    "Price": 69.99
 }
 
 ###
@@ -46,7 +47,8 @@ POST {{GameListing.Api_HostAddress}}/api/countries
 Content-Type: application/json
 
 {
-    "Name": "Test Country"
+    "Name": "Test Country",
+    "PlayerIds": [1, 2]
 }
 
 ###
@@ -64,7 +66,8 @@ Content-Type: application/json
 
 {
     "Id": 3,
-    "Name": "Test Country Put"
+    "Name": "Test Country Put",
+    "PlayerIds": [3]
 }
 
 ###
@@ -79,7 +82,8 @@ Content-Type: application/json
 {
     "Username": "Test Player",
     "Email": "test@test.com",
-    "CountryId": 1
+    "CountryId": 1,
+    "GameIds": [1, 2]
 }
 
 ###

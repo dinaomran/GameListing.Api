@@ -1,4 +1,6 @@
 ﻿using GameListing.Api.Data;
+using GameListing.Api.DTOs.Country;
+using GameListing.Api.DTOs.Player;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,18 +13,38 @@ public class CountriesController(GameListingDbContext context) : ControllerBase
 
     // GET: api/Countries
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
+    public async Task<ActionResult<IEnumerable<GetCountriesDto>>> GetCountries()
     {
-        return await context.Countries.ToListAsync();
+        var countries = await context.Countries
+            .Select(c => new GetCountriesDto(c.Id, c.Name))
+            .ToListAsync();
+
+        return Ok(countries);
     }
 
     // GET: api/Countries/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Country>> GetCountry(int id)
+    public async Task<ActionResult<GetCountryDto>> GetCountry(int id)
     {
+       //// This code will generate error because we need to do filter before doing select
+       //var country = await context.Countries
+       //    .Include(c => c.Players) // After using DTOs we now don't need to include related entities unless they are part of the DTO
+       //    .Select(c => new GetCountryDto(c.Id, c.Name))
+       //    .FirstOrDefaultAsync(q => q.Id == id);
+
         var country = await context.Countries
-            .Include(c => c.Players)
-            .FirstOrDefaultAsync(q => q.Id == id);
+            .Where(c => c.Id == id) // Filter first
+            .Select(c => new GetCountryDto(
+                c.Id,
+                c.Name,
+                c.Players.Select(p => new GetPlayersDto(
+                    p.Id,
+                    p.Username,
+                    p.Email,
+                    p.CountryId
+                )).ToList()
+            ))
+            .FirstOrDefaultAsync();
 
         if (country == null)
         {
@@ -35,14 +57,56 @@ public class CountriesController(GameListingDbContext context) : ControllerBase
     // PUT: api/Countries/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutCountry(int id, Country country)
+    public async Task<IActionResult> PutCountry(int id, UpdateCountryDto countryDto )
     {
-        if (id != country.Id)
+        var country = await context.Countries.FindAsync(id);
+
+        if (country == null)
         {
-            return BadRequest();
+            return NotFound();
         }
 
-        context.Entry(country).State = EntityState.Modified;
+        if (id != countryDto.Id)
+        {
+            return BadRequest(new { message = $"The ID in the URL ({id}) does not match the ID in the body ({countryDto.Id})." });
+        }
+
+        // After using Dto, Update fields because i don't know which fields were changed
+        country.Name = countryDto.Name;
+
+        if (countryDto.PlayerIds != null && countryDto.PlayerIds.Count != 0)
+        {
+            var playersExistIds = await context.Players
+                .Where(p => countryDto.PlayerIds.Contains(p.Id))
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            var missingIds = countryDto.PlayerIds.Except(playersExistIds).ToList();
+
+            if (missingIds.Count != 0)
+            {
+                return BadRequest($"The following Player Ids do not exist: {string.Join(", ", missingIds)}");
+            }
+
+            // First Remove relationship for all players with country
+            var playersToBeRemoved = await context.Players
+                .Where(p => p.CountryId == country.Id && !countryDto.PlayerIds.Contains(p.Id)) // Remove relationship from any player that NOT IN the update request body
+                .ToListAsync();
+
+            foreach (var player in playersToBeRemoved)
+            {
+                player.CountryId = null;
+            }
+
+            // Then add the new players
+            var players = await context.Players
+                .Where(p => countryDto.PlayerIds.Contains(p.Id))
+                .ToListAsync();
+
+            country.Players = players;
+        }
+
+        context.Entry(country).State = EntityState.Modified; // After Using DTOs we need to update fields first then update entity state
 
         try
         {
@@ -66,8 +130,34 @@ public class CountriesController(GameListingDbContext context) : ControllerBase
     // POST: api/Countries
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Country>> PostCountry(Country country)
+    public async Task<ActionResult<Country>> PostCountry(CreateCountryDto countryDto)
     {
+        var country = new Country
+        {
+            Name = countryDto.Name
+        };
+
+        if (countryDto.PlayerIds != null && countryDto.PlayerIds.Count > 0)
+        {
+            var playersExistIds = await context.Players
+                .Where(p => countryDto.PlayerIds.Contains(p.Id))
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            var missingIds = countryDto.PlayerIds.Except(playersExistIds).ToList();
+
+            if (missingIds.Count != 0)
+            {
+                return BadRequest($"The following Player Ids do not exist: {string.Join(", ", missingIds)}");
+            }
+
+            var players = await context.Players
+                .Where(p => countryDto.PlayerIds.Contains(p.Id))
+                .ToListAsync();
+
+            country.Players = players;
+        }
+
         context.Countries.Add(country);
         await context.SaveChangesAsync();
 
