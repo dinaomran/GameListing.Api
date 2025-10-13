@@ -1,4 +1,7 @@
 using GameListing.Api.Data;
+using GameListing.Api.Services;
+using GameListing.Api.Contracts;
+using GameListing.Api.MappingProfiles;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +10,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("GameListingDbConnectionString");
 builder.Services.AddDbContext<GameListingDbContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<ICountriesService, CountriesService>();
+builder.Services.AddScoped<IGamesService, GamesService>();
+builder.Services.AddScoped<IPlayersService, PlayersService>();
+
+builder.Services.AddAutoMapper(cfg => {
+    cfg.AddProfile<PlayerMappingProfile>();
+    cfg.AddProfile<CountryMappingProfile>();
+    cfg.AddProfile<GameMappingProfile>();
+});
 
 builder.Services.AddControllers()
     .AddJsonOptions(opt =>

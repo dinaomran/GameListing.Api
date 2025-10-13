@@ -82,7 +82,7 @@ Content-Type: application/json
 {
     "Username": "Test Player",
     "Email": "test@test.com",
-    "CountryId": 1,
+    "CountryId": 3,
     "GameIds": [1, 2]
 }
 
