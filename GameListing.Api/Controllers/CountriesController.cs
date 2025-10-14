@@ -1,35 +1,27 @@
-﻿using GameListing.Api.Contracts;
+﻿using Microsoft.AspNetCore.Mvc;
+using GameListing.Api.Contracts;
 using GameListing.Api.DTOs.Country;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace GameListing.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CountriesController(ICountriesService countriesService) : ControllerBase
+public class CountriesController(ICountriesService countriesService) : BaseApiController
 {
     // GET: api/Countries
     [HttpGet]
     public async Task<ActionResult<IEnumerable<GetCountriesDto>>> GetCountries()
     {
-        var countries = await countriesService.GetCountriesAsync();
-
-        return Ok(countries);
+        var result = await countriesService.GetCountriesAsync();
+        return ToActionResult(result);
     }
 
     // GET: api/Countries/5
     [HttpGet("{id}")]
     public async Task<ActionResult<GetCountryDto>> GetCountry(int id)
     {
-        var country = await countriesService.GetCountryAsync(id);
-
-        if (country == null)
-        {
-            return NotFound();
-        }
-
-        return country;
+        var result = await countriesService.GetCountryAsync(id);
+        return ToActionResult(result);
     }
 
     // PUT: api/Countries/5
@@ -37,28 +29,8 @@ public class CountriesController(ICountriesService countriesService) : Controlle
     [HttpPut("{id}")]
     public async Task<IActionResult> PutCountry(int id, UpdateCountryDto countryDto )
     {
-        if (id != countryDto.Id)
-        {
-            return BadRequest(new { message = $"The ID in the URL ({id}) does not match the ID in the body ({countryDto.Id})." });
-        }
-
-        try
-        {
-            await countriesService.UpdateCountryAsync(id, countryDto);
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await countriesService.CountryExistsAsync(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
+        var result = await countriesService.UpdateCountryAsync(id, countryDto);
+        return ToActionResult(result);
     }
 
     // POST: api/Countries
@@ -66,17 +38,17 @@ public class CountriesController(ICountriesService countriesService) : Controlle
     [HttpPost]
     public async Task<ActionResult<GetCountryDto>> PostCountry(CreateCountryDto countryDto)
     {
-        var resultDto = await countriesService.CreateCountryAsync(countryDto);
+        var result = await countriesService.CreateCountryAsync(countryDto);
+        if (!result.IsSuccess) return MapErrorsToResponse(result.Errors);
 
-        return CreatedAtAction(nameof(GetCountry), new { id = resultDto.Id }, resultDto);
+        return CreatedAtAction(nameof(GetCountry), new { id = result.Value!.Id }, result.Value);
     }
 
     // DELETE: api/Countries/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCountry(int id)
     {
-        await countriesService.DeleteCountryAsync(id);
-
-        return NoContent();
+        var result = await countriesService.DeleteCountryAsync(id);
+        return ToActionResult(result);
     }
 }

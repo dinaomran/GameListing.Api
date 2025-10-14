@@ -7,7 +7,7 @@ public record GetPlayerDto
     int Id,
     string Username,
     string Email,
-    string Country,
+    string CountryName,
     List<GetGamesDto> Games
 );
 

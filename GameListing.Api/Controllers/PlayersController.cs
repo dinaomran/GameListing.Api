@@ -1,35 +1,27 @@
-﻿using GameListing.Api.DTOs.Player;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using GameListing.Api.Contracts;
+using GameListing.Api.DTOs.Player;
 
 namespace GameListing.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PlayersController(IPlayersService playersService) : ControllerBase
+public class PlayersController(IPlayersService playersService) : BaseApiController
 {
     // GET: api/Players
     [HttpGet]
     public async Task<ActionResult<IEnumerable<GetPlayersDto>>> GetPlayers()
     {
-        var players = await playersService.GetPlayersAsync();
-
-        return Ok(players);
+        var result = await playersService.GetPlayersAsync();
+        return ToActionResult(result);
     }
 
     // GET: api/Players/5
     [HttpGet("{id}")]
     public async Task<ActionResult<GetPlayerDto>> GetPlayer(int id)
     {
-        var player = await playersService.GetPlayerAsync(id);
-
-        if (player == null)
-        {
-            return NotFound();
-        }
-
-        return player;
+        var result = await playersService.GetPlayerAsync(id);
+        return ToActionResult(result);
     }
 
     // PUT: api/Players/5
@@ -37,28 +29,8 @@ public class PlayersController(IPlayersService playersService) : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutPlayer(int id, UpdatePlayerDto playerDto)
     {
-        if (id != playerDto.Id)
-        {
-            return BadRequest(new { message = $"The ID in the URL ({id}) does not match the ID in the body ({playerDto.Id})." });
-        }
-
-        try
-        {
-            await playersService.UpdatePlayerAsync(id, playerDto);
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await playersService.PlayerExistsAsync(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
+        var result = await playersService.UpdatePlayerAsync(id, playerDto);
+        return ToActionResult(result);
     }
 
     // POST: api/Players
@@ -66,17 +38,17 @@ public class PlayersController(IPlayersService playersService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<GetPlayerDto>> PostPlayer(CreatePlayerDto playerDto)
     {
-        var player = await playersService.CreatePlayerAsync(playerDto);
+        var result = await playersService.CreatePlayerAsync(playerDto);
+        if (!result.IsSuccess) return MapErrorsToResponse(result.Errors);
 
-        return CreatedAtAction(nameof(GetPlayer), new { id = player.Id }, player);
+        return CreatedAtAction(nameof(GetPlayer), new { id = result.Value!.Id }, result.Value);
     }
 
     // DELETE: api/Players/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePlayer(int id)
     {
-        await playersService.DeletePlayerAsync(id);
-
-        return NoContent();
+        var result = await playersService.DeletePlayerAsync(id);
+        return ToActionResult(result);
     }
 }
