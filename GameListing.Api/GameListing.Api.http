@@ -40,6 +40,8 @@ Content-Type: application/json
 ###
 
 GET {{GameListing.Api_HostAddress}}/api/countries
+Authorization: Basic dGVzdDFAdGVzdC5jb206UEBzc3dvcmQx
+# i used https://www.base64encode.org/ to encode test1@test.com:P@ssword1
 
 ###
 
@@ -107,3 +109,21 @@ Content-Type: application/json
 }
 
 ###
+
+POST {{GameListing.Api_HostAddress}}/api/auth/register
+Content-Type: application/json
+{
+    "Email": "test1@test.com",
+    "Password": "P@ssword1",
+    "FirstName": "Test",
+    "LastName": "Test"
+}
+
+###
+
+POST {{GameListing.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+{
+    "Email": "test1@test.com",
+    "Password": "P@ssword1"
+}

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GameListing.Api.Contracts;
 using GameListing.Api.DTOs.Country;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameListing.Api.Controllers;
 
@@ -10,6 +11,7 @@ public class CountriesController(ICountriesService countriesService) : BaseApiCo
 {
     // GET: api/Countries
     [HttpGet]
+    [Authorize] // Require authentication to access this endpoint
     public async Task<ActionResult<IEnumerable<GetCountriesDto>>> GetCountries()
     {
         var result = await countriesService.GetCountriesAsync();
