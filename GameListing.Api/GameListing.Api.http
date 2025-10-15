@@ -39,9 +39,12 @@ Content-Type: application/json
 
 ###
 
+@apiKey = dGVzdDFAdGVzdC5jb206UEBzc3dvcmQx
 GET {{GameListing.Api_HostAddress}}/api/countries
-Authorization: Basic dGVzdDFAdGVzdC5jb206UEBzc3dvcmQx
-# i used https://www.base64encode.org/ to encode test1@test.com:P@ssword1
+X-Api-Key: {{apiKey}}
+
+### i used https://www.base64encode.org/ to encode test1@test.com:P@ssword1
+# Authorization: Basic dGVzdDFAdGVzdC5jb206UEBzc3dvcmQx 
 
 ###
 
