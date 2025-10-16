@@ -39,20 +39,22 @@ Content-Type: application/json
 
 ###
 
-@apiKey = dGVzdDFAdGVzdC5jb206UEBzc3dvcmQx
+# @apiKey = dGVzdDFAdGVzdC5jb206UEBzc3dvcmQx # we now get it from database
 GET {{GameListing.Api_HostAddress}}/api/countries
-X-Api-Key: {{apiKey}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NTU0Mjc0Ny0zNTNlLTRkMGQtOGMxZC0yNTQ2YWFkMDNhNTQiLCJlbWFpbCI6InRlc3QxQHRlc3QuY29tIiwianRpIjoiNGI4MTY3ODMtZjU1ZC00OGNjLTgwMmMtODg4MDZkMWZkYzQwIiwibmFtZSI6IlRlc3QgVGVzdCIsImV4cCI6MTc2MDYwNzcxMiwiaXNzIjoiR2FtZUxpc3RpbmdBUEkiLCJhdWQiOiJHYW1lTGlzdGluZ0FQSUNsaWVudCJ9.pOOj-SPAmK5MxzX-dhHNy8O7fBgTJCQ_u4hqUyA8_KM
 
-### i used https://www.base64encode.org/ to encode test1@test.com:P@ssword1
+### i used https://www.base64encode.org/ to encode test1@test.com:P@ssword1 and put the value in Basic Authentication
 # Authorization: Basic dGVzdDFAdGVzdC5jb206UEBzc3dvcmQx 
 
+# X-Api-Key: {{apiKey}}
 ###
 
 POST {{GameListing.Api_HostAddress}}/api/countries
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiN2I5NDcxOC03OGRjLTRkMDMtODIxNS00YzIwY2VlOGM0YjQiLCJlbWFpbCI6ImFkbWluaXN0cmF0b3JAdGVzdC5jb20iLCJqdGkiOiI2MTEwYjI4My1hNjZlLTQ1MzUtOTFmYS01ZmNkMjNjODUyYzciLCJuYW1lIjoiVGVzdCBUZXN0IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW5pc3RyYXRvciIsImV4cCI6MTc2MDYxNzE2NSwiaXNzIjoiR2FtZUxpc3RpbmdBUEkiLCJhdWQiOiJHYW1lTGlzdGluZ0FQSUNsaWVudCJ9.xurM-5Sf7KWSCJVn0gzmZ6Rd-INdBBKa2CpJIrNpR94
 Content-Type: application/json
 
 {
-    "Name": "Test Country1",
+    "Name": "Test Countryy",
     "PlayerIds": [1, 2]
 }
 
@@ -116,10 +118,11 @@ Content-Type: application/json
 POST {{GameListing.Api_HostAddress}}/api/auth/register
 Content-Type: application/json
 {
-    "Email": "test1@test.com",
+    "Email": "administrator@test.com",
     "Password": "P@ssword1",
     "FirstName": "Test",
-    "LastName": "Test"
+    "LastName": "Test",
+    "Role": "Administrator"
 }
 
 ###
@@ -127,6 +130,15 @@ Content-Type: application/json
 POST {{GameListing.Api_HostAddress}}/api/auth/login
 Content-Type: application/json
 {
-    "Email": "test1@test.com",
+    "Email": "test@test.com",
+    "Password": "P@ssword1"
+}
+
+###
+
+POST {{GameListing.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+{
+    "Email": "administrator@test.com",
     "Password": "P@ssword1"
 }

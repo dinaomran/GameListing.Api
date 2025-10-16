@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace GameListing.Api.Data;
@@ -23,6 +24,9 @@ public class GameListingDbContext(DbContextOptions<GameListingDbContext> options
         {
             b.HasIndex(k => k.Key).IsUnique(); // Put index on Key property and make it unique
         });
+
+        // To add roles and other identity related configurations
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }
 
