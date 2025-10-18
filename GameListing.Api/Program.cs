@@ -1,15 +1,16 @@
 using System.Text;
-using GameListing.Api.Data;
+using GameListing.Api.Domain;
 using GameListing.Api.Handlers;
-using GameListing.Api.Services;
-using GameListing.Api.Constants;
-using GameListing.Api.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using GameListing.Api.MappingProfiles;
+using GameListing.Api.Common.Constants;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using GameListing.Api.Application.Contracts;
+using GameListing.Api.Application.Services;
+using GameListing.Api.Application.MappingProfiles;
+using GameListing.Api.Common.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,15 @@ builder.Services.AddDbContext<GameListingDbContext>(options => options.UseSqlSer
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
     .AddRoles<IdentityRole>() // To fix error: "Store does not implement IUserRoleStore<TUser>" we need to add IdentityRole to tell identity to consider roles as we used roles in UsersService
     .AddEntityFrameworkStores<GameListingDbContext>();
+
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>() ?? new JwtSettings();
+
+if (string.IsNullOrWhiteSpace(jwtSettings.Key))
+{
+    throw new InvalidOperationException("JwtSettings:Key is not configured.");
+}
+
 builder.Services.AddAuthentication(options => {
     //options.DefaultAuthenticateScheme = AuthenticationDefaults.BasicScheme;
     //options.DefaultChallengeScheme = AuthenticationDefaults.BasicScheme;
@@ -41,9 +51,9 @@ builder.Services.AddAuthentication(options => {
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["JwtSettings:Issuer"], // Who creates the token
-            ValidAudience = builder.Configuration["JwtSettings:Audience"], // Who receives the token
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])), // This will make error if key has no value
+            ValidIssuer = jwtSettings.Issuer, // Who creates the token
+            ValidAudience = jwtSettings.Audience, // Who receives the token
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)), // This will make error if key has no value
             ClockSkew = TimeSpan.Zero // Default is 5 min so i make it zero so after 10 mins token will expire instantly so it doesn't wait more 5 mins
         };
     })

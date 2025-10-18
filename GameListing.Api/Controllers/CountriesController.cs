@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GameListing.Api.Contracts;
-using GameListing.Api.DTOs.Country;
+using GameListing.Api.Common.Constants;
 using Microsoft.AspNetCore.Authorization;
+using GameListing.Api.Application.DTOs.Country;
+using GameListing.Api.Application.Contracts;
 
 namespace GameListing.Api.Controllers;
 
@@ -20,7 +21,7 @@ public class CountriesController(ICountriesService countriesService) : BaseApiCo
 
     // GET: api/Countries/5
     [HttpGet("{id}")]
-    [Authorize(Roles = "Administrator, User")]
+    [Authorize(Roles = $"{RoleNames.Administrator}, {RoleNames.User}")]
     public async Task<ActionResult<GetCountryDto>> GetCountry(int id)
     {
         var result = await countriesService.GetCountryAsync(id);
@@ -30,7 +31,7 @@ public class CountriesController(ICountriesService countriesService) : BaseApiCo
     // PUT: api/Countries/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = RoleNames.Administrator)]
     public async Task<IActionResult> PutCountry(int id, UpdateCountryDto countryDto )
     {
         var result = await countriesService.UpdateCountryAsync(id, countryDto);
@@ -40,7 +41,7 @@ public class CountriesController(ICountriesService countriesService) : BaseApiCo
     // POST: api/Countries
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = RoleNames.Administrator)]
     public async Task<ActionResult<GetCountryDto>> PostCountry(CreateCountryDto countryDto)
     {
         var result = await countriesService.CreateCountryAsync(countryDto);
@@ -51,7 +52,7 @@ public class CountriesController(ICountriesService countriesService) : BaseApiCo
 
     // DELETE: api/Countries/5
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = RoleNames.Administrator)]
     public async Task<IActionResult> DeleteCountry(int id)
     {
         var result = await countriesService.DeleteCountryAsync(id);

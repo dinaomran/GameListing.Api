@@ -1,10 +1,10 @@
 ﻿using System.Text;
 using System.Security.Claims;
-using GameListing.Api.Contracts;
-using GameListing.Api.DTOs.Auth;
 using System.Text.Encodings.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
+using GameListing.Api.Application.Contracts;
+using GameListing.Api.Application.DTOs.Auth;
 
 namespace GameListing.Api.Handlers;
 

@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
-using GameListing.Api.Contracts;
 using System.Text.Encodings.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
+using GameListing.Api.Application.Contracts;
 
 namespace GameListing.Api.Handlers;
 

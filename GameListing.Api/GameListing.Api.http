@@ -65,6 +65,7 @@ DELETE {{GameListing.Api_HostAddress}}/api/countries/{{id}}
 ###
 
 GET {{GameListing.Api_HostAddress}}/api/countries/{{id}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlYzY3YTNkMi02NDQ5LTRhMTUtOWEzZC1kYzBlMzdkZDc3ZDQiLCJlbWFpbCI6InVzZXJ0ZXN0QHRlc3QuY29tIiwianRpIjoiNWRhM2JmMGYtY2Y4NS00M2MyLWFjNjQtMmIwODBlMzlmZTRkIiwibmFtZSI6IlRlc3QgVGVzdCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJleHAiOjE3NjA3OTQ5MTEsImlzcyI6IkdhbWVMaXN0aW5nQVBJIiwiYXVkIjoiR2FtZUxpc3RpbmdBUElDbGllbnQifQ.-MlqPjBlmnR1Srusw-Z9C05KH73MdSB7F16kpBYxSXc
 
 ###
 
@@ -127,10 +128,22 @@ Content-Type: application/json
 
 ###
 
+POST {{GameListing.Api_HostAddress}}/api/auth/register
+Content-Type: application/json
+{
+    "Email": "usertest1@test.com",
+    "Password": "P@ssword1",
+    "FirstName": "Test",
+    "LastName": "Test",
+    "Role": "User"
+}
+
+###
+
 POST {{GameListing.Api_HostAddress}}/api/auth/login
 Content-Type: application/json
 {
-    "Email": "test@test.com",
+    "Email": "usertest1@test.com",
     "Password": "P@ssword1"
 }
 

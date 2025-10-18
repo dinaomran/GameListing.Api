@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GameListing.Api.Contracts;
-using GameListing.Api.DTOs.Player;
+using GameListing.Api.Application.Contracts;
+using GameListing.Api.Application.DTOs.Player;
 
 namespace GameListing.Api.Controllers;
 

@@ -1,6 +1,6 @@
-﻿using GameListing.Api.Results;
-using Microsoft.AspNetCore.Mvc;
-using GameListing.Api.Constants;
+﻿using Microsoft.AspNetCore.Mvc;
+using GameListing.Api.Common.Results;
+using GameListing.Api.Common.Constants;
 
 namespace GameListing.Api.Controllers;
 

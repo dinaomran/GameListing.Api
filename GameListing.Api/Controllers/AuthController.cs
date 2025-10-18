@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GameListing.Api.Contracts;
-using GameListing.Api.DTOs.Auth;
 using Microsoft.AspNetCore.Authorization;
+using GameListing.Api.Application.DTOs.Auth;
+using GameListing.Api.Application.Contracts;
 
 namespace GameListing.Api.Controllers;
 
